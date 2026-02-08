@@ -13,6 +13,7 @@ import (
 func main() {
 	// 配置AWS Cognito
 
+
 	client, err := cognito.NewClient(cognito.Config{
 		UserPoolID: os.Getenv("COGNITO_USER_POOL_ID"),
 		ClientID:   os.Getenv("COGNITO_CLIENT_ID"),
@@ -27,9 +28,9 @@ func main() {
 	fmt.Println("===========================================\n")
 
 	// 演示方式1：管理员创建用户（无需验证）
-	demoAdminRegister(client)
+	// demoAdminRegister(client)
 
-	fmt.Println("\n" + strings.Repeat("=", 50) + "\n")
+	// fmt.Println("\n" + strings.Repeat("=", 50) + "\n")
 
 	// 演示方式2：用户自注册（需要邮箱验证）
 	demoUserSignUp(client)
@@ -93,8 +94,8 @@ func demoUserSignUp(client *cognito.Client) {
 	fmt.Println("特点：需要邮箱验证码确认")
 	fmt.Println(strings.Repeat("-", 50))
 
-	email := "self-signup@example.com"
-	password := "User@123456"
+	email := "admin@126.com"
+	password := "Ab@123456"
 
 	// 清理旧用户
 	fmt.Printf("\n1. 清理旧用户 %s...\n", email)
@@ -151,13 +152,13 @@ func demoUserSignUp(client *cognito.Client) {
 	fmt.Printf("   - 调用 ConfirmSignUp 完成验证\n")
 
 	// 由于我们没有实际邮件，使用管理员确认
-	fmt.Printf("\n6. 使用管理员权限确认用户（模拟验证）...\n")
-	err = client.ConfirmUser(email)
-	if err != nil {
-		log.Printf("   ✗ 确认失败: %v\n", err)
-		return
-	}
-	fmt.Printf("   ✓ 用户已确认\n")
+	// fmt.Printf("\n6. 使用管理员权限确认用户（模拟验证）...\n")
+	// err = client.ConfirmUser(email)
+	// if err != nil {
+	// 	log.Printf("   ✗ 确认失败: %v\n", err)
+	// 	return
+	// }
+	// fmt.Printf("   ✓ 用户已确认\n")
 
 	// 确认后查看状态
 	fmt.Printf("\n7. 查看确认后的用户状态...\n")
