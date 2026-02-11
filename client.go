@@ -19,6 +19,7 @@ type Config struct {
 // Client Cognito SDK客户端
 type Client struct {
 	config       Config
+	awsConfig    aws.Config
 	cognitoClient *cognitoidentityprovider.Client
 }
 
@@ -41,6 +42,7 @@ func NewClient(cfg Config) (*Client, error) {
 
 	return &Client{
 		config:       cfg,
+		awsConfig:    awsConfig,
 		cognitoClient: cognitoClient,
 	}, nil
 }
@@ -70,6 +72,7 @@ func NewClientWithCredentials(cfg Config, accessKeyID, secretAccessKey string) (
 
 	return &Client{
 		config:       cfg,
+		awsConfig:    awsConfig,
 		cognitoClient: cognitoClient,
 	}, nil
 }
@@ -77,4 +80,9 @@ func NewClientWithCredentials(cfg Config, accessKeyID, secretAccessKey string) (
 // GetConfig 获取配置
 func (c *Client) GetConfig() Config {
 	return c.config
+}
+
+// GetAWSConfig 获取AWS配置
+func (c *Client) GetAWSConfig() aws.Config {
+	return c.awsConfig
 }

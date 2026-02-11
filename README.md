@@ -41,6 +41,13 @@
 - 从组中移除用户
 - 查询用户所属组
 
+✨ **DynamoDB 集成** 🆕
+- 完整的 CRUD 操作
+- 批量读写
+- 条件查询和扫描
+- 表管理（创建、删除、列表）
+- 与 Cognito 无缝集成
+
 ## 安装
 
 ```bash
@@ -327,19 +334,77 @@ if err != nil {
 ## 注意事项
 
 1. **AWS 凭证**: 确保配置了正确的 AWS 凭证（环境变量、~/.aws/credentials 或通过 IAM 角色）
-2. **权限**: IAM 用户需要有 Cognito 相关权限
+2. **权限**: IAM 用户需要有 Cognito 和 DynamoDB 相关权限
 3. **用户池配置**: 确保 Cognito 用户池已正确配置（认证流程、应用客户端等）
 4. **密码策略**: 密码需要符合用户池的密码策略要求
+5. **DynamoDB 表**: 使用 DynamoDB 功能前需要创建相应的表
+
+## DynamoDB 集成 🆕
+
+### 快速开始
+
+```go
+// 创建 Cognito 客户端
+client, err := cognito.NewClient(cognito.Config{
+    UserPoolID: "us-east-1_xxxxx",
+    ClientID:   "xxxxxxxxxx",
+    Region:     "us-east-1",
+})
+
+// 创建 DynamoDB 客户端（复用 AWS 配置）
+dbClient := client.NewDynamoDBClient()
+
+// 插入数据
+type User struct {
+    UserID   string `dynamodbav:"user_id"`
+    Username string `dynamodbav:"username"`
+    Email    string `dynamodbav:"email"`
+}
+
+user := User{
+    UserID:   "user-001",
+    Username: "john_doe",
+    Email:    "john@example.com",
+}
+
+err = dbClient.PutItem(ctx, "Users", user)
+
+// 获取数据
+key := map[string]types.AttributeValue{
+    "user_id": &types.AttributeValueMemberS{Value: "user-001"},
+}
+
+var retrievedUser User
+err = dbClient.GetItem(ctx, "Users", key, &retrievedUser)
+```
+
+### DynamoDB 功能
+
+- **基础操作**: PutItem, GetItem, UpdateItem, DeleteItem
+- **批量操作**: BatchWriteItem
+- **查询**: Query, Scan（支持条件过滤）
+- **表管理**: CreateTable, DeleteTable, ListTables, DescribeTable, TableExists
+
+### 示例项目
+
+- [examples/dynamodb-basic/](examples/dynamodb-basic/) - DynamoDB 基础操作示例
+- [examples/cognito-dynamodb-integration/](examples/cognito-dynamodb-integration/) - Cognito + DynamoDB 完整集成示例
+
+查看 [API_REFERENCE.md](API_REFERENCE.md) 了解完整的 DynamoDB API 文档。
 
 ## 文档
 
 📚 **完整文档**
 - [DUAL_REGISTRATION.md](DUAL_REGISTRATION.md) - 🎉 **两种注册方式详解**（新）
-- [API_REFERENCE.md](API_REFERENCE.md) - API 快速参考（新）
+- [API_REFERENCE.md](API_REFERENCE.md) - API 快速参考（包含 DynamoDB API）
 - [USAGE_GUIDE.md](USAGE_GUIDE.md) - 完整使用指南
 - [FIX_SUMMARY.md](FIX_SUMMARY.md) - 问题修复说明
-- [examples/signup-flow/](examples/signup-flow/) - 注册方式对比示例（新）
+
+📂 **示例代码**
+- [examples/signup-flow/](examples/signup-flow/) - 注册方式对比示例
 - [examples/basic/](examples/basic/) - 基础功能示例
+- [examples/dynamodb-basic/](examples/dynamodb-basic/) - DynamoDB 基础操作 🆕
+- [examples/cognito-dynamodb-integration/](examples/cognito-dynamodb-integration/) - Cognito + DynamoDB 集成 🆕
 
 ## 常见问题
 
